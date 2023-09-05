@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../projects/car_counter/car_counter_sender"
+		},
+		{
+			"name": "Car_counter_reciever",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
