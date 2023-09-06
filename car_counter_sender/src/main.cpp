@@ -80,14 +80,13 @@
 //     delay(1000);  // delay must be greater than 5 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
 // }
 
-
 #include <Arduino.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
+const uint16_t kIrLed = 4; // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 
-IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
+IRsend irsend(kIrLed); // Set the GPIO to be used to sending the message.
 
 // Example of data captured by IRrecvDumpV2.ino
 // uint16_t rawData[67] = {9000, 4500, 650, 550, 650, 1650, 600, 550, 650, 550,
@@ -102,13 +101,15 @@ IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
 //     0x02, 0x92, 0x0F, 0x00, 0x00, 0x00, 0xF0,
 //     0x01, 0xE2, 0xFE, 0x71, 0x40, 0x11, 0xF0};
 
-void setup() {
-    irsend.begin();
-    Serial.begin(9600);
+void setup()
+{
+  irsend.begin();
+  Serial.begin(9600);
 }
 
-void loop() {
-//   Serial.println("NEC");
-  irsend.sendNEC(0x00FFE01FUL);
-//   delay(2000);
+void loop()
+{
+  //   Serial.println("NEC");
+  irsend.sendNEC(0xFFA25DUL);
+  delay(1);
 }

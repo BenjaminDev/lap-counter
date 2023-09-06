@@ -40,8 +40,8 @@ const uint16_t kRecvPin = 14; // Pin 14 is D5
 const char* host = "192.168.1.35"; // Matt's house
 // const char *host = "192.168.1.12"; // Benj's house
 const uint16_t port = 65000;
-const int32_t delay_between_triggers = 10000; // 10 Second delay between triggers.
-const char *car_name = "Sprout";
+const int32_t delay_between_triggers = 3000; // 10 Second delay between triggers.
+const char *car_name = "Frost";
 // const bool DEBUG = false;
 
 IRrecv irrecv(kRecvPin);
@@ -77,29 +77,23 @@ void setup()
 
 void loop()
 {
-  
-  if (irrecv.decode(&results))
+  if (irrecv.decode(&results,NULL,2,10))
   {
-    serialPrintUint64(results.value, HEX);
-    WiFiClient client;
-    Serial.println("Had to connect again");
-    for (int i = 0; i < 5; i++){
-      if(client.connect(host, port)){
-        break;
+    if (results.value == 16753245UL){
+      Serial.println("We got one");
+      Serial.println(results.decode_type);
+      WiFiClient client;
+      for (int i = 0; i < 5; i++){
+        if(client.connect(host, port)){
+          break;
+        }
       }
+      // Logging a lap
+      client.println(car_name);
+      delay(delay_between_triggers);
+      Serial.println("ready");
     }
-    // {
-    //   Serial.print('.');
-    // }
-    
-    client.println(car_name);
-
-    Serial.println(WiFi.localIP());
-    Serial.println("loop");
-    
-    
-    delay(delay_between_triggers);
+    // serialPrintUint64(results.value, HEX);
     irrecv.resume(); // Receive the next value
-    Serial.println("ready");
   }
 }
