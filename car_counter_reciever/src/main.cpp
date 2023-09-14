@@ -16,6 +16,7 @@
  *     Based on Ken Shirriff's IrsendDemo Version 0.1 July, 2009
  */
 
+#define DEBUG
 #include <Arduino.h>
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
@@ -23,28 +24,60 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
-// #include <HTTPClient.h>
 
-// #include <PolledTimeout.h>
-// #include <algorithm>  // std::min
+bool IRrecv::decodeBEN(decode_results *results, uint16_t offset,
+                       const uint16_t nbits, const bool strict) {
+
+    // 600, 1650, 650, 550, 600, 1650, 650, 1650, 650, 1650}
+    bool foound;
+    // Serial.println("Start of message");
+    uint16_t num_bits = 16;
+    const int message[] = {4427,  2285,  241,  922, 202, 323, 241, 898, 227, 324, 240, 324, 255, 311, 253, 870};
+                          //  4467,  2256,  256,  871, 268  295  269  856  270  295  268  296  268  297  268 857
+                          //  4427  2285  241  922 202 323 241 898 227 324 240 324 255 311 253 870
+    uint16_t matches  = 0;
+    for (uint16_t i = 0; i< num_bits; i++){
+      Serial.print(results->rawbuf[offset+i]);
+      Serial.print(" ");
+      // matchSpace
+      // Serial.println(results->rawbuf[offset+i]);
+      // Serial.println(message[i]);
+      if (abs(results->rawbuf[offset+i] - message[i])< 50 ) {
+        matches++;
+      }
+    }
+    if (matches > 14){
+      return true;
+    }
+    Serial.println("");
+    Serial.println(matches);
+    Serial.println("");
+    // Serial.println(nbits);
+    // Serial.println(foound);
+    return false;
+}
 
 #ifndef STASSID
-#define STASSID ""
-#define STAPSK ""
+
 // #define STASSID "P"
 // #define STAPSK "P"
 
 #endif
 #define DEBUG_WIFI_GENERIC
 const uint16_t kRecvPin = 14; // Pin 14 is D5
-const char* host = "192.168.1.35"; // Matt's house
+const char* host = "192.168.1.45"; // Matt's house
 // const char *host = "192.168.1.12"; // Benj's house
 const uint16_t port = 65000;
 const int32_t delay_between_triggers = 3000; // 10 Second delay between triggers.
 const char *car_name = "Frost";
 // const bool DEBUG = false;
 
-IRrecv irrecv(kRecvPin);
+// Use turn on the save buffer feature for more complete capture coverage.
+const uint16_t kCaptureBufferSize = 1024;
+const uint8_t kTimeout = 15;
+IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, true);
+// decode_results results;  // Somewhere to store the results
+
 
 decode_results results;
 
@@ -68,6 +101,8 @@ void setup()
   Serial.println(WiFi.localIP());
 
   irrecv.enableIRIn(); // Start the receiver
+  // irrecv.setTolerance(kTolerancePercentage);  // Override the default tolerance.
+  // irrecv.enableIRIn();  // Start the receiver
   while (!Serial)      // Wait for the serial connection to be establised.
     delay(50);
   Serial.println();
@@ -77,9 +112,16 @@ void setup()
 
 void loop()
 {
-  if (irrecv.decode(&results,NULL,2,10))
+  // 600, 1650, 650, 550, 600, 1650, 650, 1650, 650, 1650}
+  
+  if (irrecv.decode(&results))
   {
-    if (results.value == 16753245UL){
+    // Serial.println("Found");
+    // Serial.println(results.value);
+    // Serial.println(results.decode_type);
+    // Serial.println(results.overflow);
+    // Serial.println(results.bits);
+    // if (results.value == 16753245UL){
       Serial.println("We got one");
       Serial.println(results.decode_type);
       WiFiClient client;
@@ -92,8 +134,9 @@ void loop()
       client.println(car_name);
       delay(delay_between_triggers);
       Serial.println("ready");
-    }
+    // }
     // serialPrintUint64(results.value, HEX);
     irrecv.resume(); // Receive the next value
   }
 }
+// 101001 10100100 00010000 10010100

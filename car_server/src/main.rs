@@ -68,8 +68,9 @@ async fn main() {
 //         .route("/all", get(show_all))
 //         .merge(front_public_route());
 // }
-async fn set_current_driver(
-    extract::P
+struct 
+async fn set_race_details(
+    extract::FromRequest()
 )
 async fn add_lap(
     // extract::Path(car_id): extract::Path<String>,
