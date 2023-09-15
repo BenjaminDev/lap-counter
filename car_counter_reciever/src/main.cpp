@@ -58,18 +58,19 @@ bool IRrecv::decodeBEN(decode_results *results, uint16_t offset,
 }
 
 #ifndef STASSID
-
+#define STASSID ""
+#define STAPSK ""
 // #define STASSID "P"
 // #define STAPSK "P"
 
 #endif
 #define DEBUG_WIFI_GENERIC
 const uint16_t kRecvPin = 14; // Pin 14 is D5
-const char* host = "192.168.1.45"; // Matt's house
+const char* host = "192.168.1.34"; // Matt's house
 // const char *host = "192.168.1.12"; // Benj's house
 const uint16_t port = 65000;
 const int32_t delay_between_triggers = 3000; // 10 Second delay between triggers.
-const char *car_name = "Frost";
+const char *car_name = "Sprout";
 // const bool DEBUG = false;
 
 // Use turn on the save buffer feature for more complete capture coverage.
