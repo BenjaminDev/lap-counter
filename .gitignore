@@ -3,3 +3,4 @@ car_server/carcounter
 car_server/test.db
 car_server/migrations/2023-06-12-191142_add_laps/down.sql
 car_server/migrations/2023-06-12-191142_add_laps/up.sql
+car_counter_sender/.pio/build/

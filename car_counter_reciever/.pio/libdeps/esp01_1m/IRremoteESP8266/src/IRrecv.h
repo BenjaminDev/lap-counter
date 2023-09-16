@@ -165,7 +165,7 @@ class IRrecv {
                        const int16_t excess = kMarkExcess);
 #ifndef UNIT_TEST
 
- private:
+//  private:
 #endif
   irparams_t *irparams_save;
   uint8_t _tolerance;
@@ -296,7 +296,7 @@ class IRrecv {
 #endif  // DECODE_VOLTAS
 #if (DECODE_NEC || DECODE_SHERWOOD || DECODE_AIWA_RC_T501 || DECODE_SANYO)
   bool decodeNEC(decode_results *results, uint16_t offset = kStartOffset,
-                 const uint16_t nbits = kNECBits, const bool strict = true);
+                 const uint16_t nbits = kNECBits, const bool strict = false);
 #endif
 #if DECODE_ARGO
   bool decodeArgo(decode_results *results, uint16_t offset = kStartOffset,

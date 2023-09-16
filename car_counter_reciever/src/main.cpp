@@ -37,29 +37,37 @@ bool IRrecv::decodeBEN(decode_results *results, uint16_t offset,
                           //  4427  2285  241  922 202 323 241 898 227 324 240 324 255 311 253 870
     uint16_t matches  = 0;
     for (uint16_t i = 0; i< num_bits; i++){
-      Serial.print(results->rawbuf[offset+i]);
-      Serial.print(" ");
+      // Serial.print(results->rawbuf[offset+i]);
+      // Serial.print(" - ");
       // matchSpace
       // Serial.println(results->rawbuf[offset+i]);
       // Serial.println(message[i]);
-      if (abs(results->rawbuf[offset+i] - message[i])< 50 ) {
+      Serial.print(abs(results->rawbuf[offset+i] - message[i]));
+        Serial.print(" - ");
+
+      if (abs(results->rawbuf[offset+i] - message[i])< 120 ) {
+        Serial.print(abs(results->rawbuf[offset+i] - message[i]));
+        Serial.print(" - ");
+        
+      // matchSpace
         matches++;
       }
     }
     if (matches > 14){
+      Serial.println("True");
       return true;
     }
     Serial.println("");
     Serial.println(matches);
     Serial.println("");
     // Serial.println(nbits);
-    // Serial.println(foound);
+    Serial.println("False");
     return false;
 }
 
 #ifndef STASSID
-#define STASSID ""
-#define STAPSK ""
+#define STASSID "Noodlefishes"
+#define STAPSK "C@foodconv3rters"
 // #define STASSID "P"
 // #define STAPSK "P"
 
@@ -69,7 +77,7 @@ const uint16_t kRecvPin = 14; // Pin 14 is D5
 const char* host = "192.168.1.34"; // Matt's house
 // const char *host = "192.168.1.12"; // Benj's house
 const uint16_t port = 65000;
-const int32_t delay_between_triggers = 3000; // 10 Second delay between triggers.
+const int32_t delay_between_triggers = 1000; // 10 Second delay between triggers.
 const char *car_name = "Sprout";
 // const bool DEBUG = false;
 
@@ -78,6 +86,7 @@ const uint16_t kCaptureBufferSize = 1024;
 const uint8_t kTimeout = 15;
 IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, true);
 // decode_results results;  // Somewhere to store the results
+WiFiClient client;
 
 
 decode_results results;
@@ -114,27 +123,38 @@ void setup()
 void loop()
 {
   // 600, 1650, 650, 550, 600, 1650, 650, 1650, 650, 1650}
-  
-  if (irrecv.decode(&results))
+  bool found;
+  found = irrecv.decode(&results,NULL,0,0);
+  // Serial.println("ssss");
+  if (found)
   {
-    // Serial.println("Found");
-    // Serial.println(results.value);
+
+    Serial.println("Found");
+    Serial.println(results.value);
+    // if (results.value == 16753245UL){
+    if (results.value==61680)  {
+    // if (results.value == 1){
+
+      Serial.println("We got one");
     // Serial.println(results.decode_type);
     // Serial.println(results.overflow);
     // Serial.println(results.bits);
-    // if (results.value == 16753245UL){
-      Serial.println("We got one");
       Serial.println(results.decode_type);
-      WiFiClient client;
-      for (int i = 0; i < 5; i++){
-        if(client.connect(host, port)){
-          break;
+      if (!client.connected()){
+        Serial.println("had to reconnect!");
+        for (int i = 0; i < 5; i++){
+          Serial.println("had to t!");
+          if(client.connect(host, port)){
+
+            break;
+          }
         }
       }
       // Logging a lap
       client.println(car_name);
       delay(delay_between_triggers);
       Serial.println("ready");
+    }
     // }
     // serialPrintUint64(results.value, HEX);
     irrecv.resume(); // Receive the next value

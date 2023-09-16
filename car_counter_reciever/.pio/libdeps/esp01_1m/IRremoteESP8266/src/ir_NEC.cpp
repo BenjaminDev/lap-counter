@@ -86,10 +86,11 @@ bool IRrecv::decodeNEC(decode_results *results, uint16_t offset,
     return false;  // Not strictly an NEC message.
 
   uint64_t data = 0;
-
+  Serial.println("111111");
   // Header - All NEC messages have this Header Mark.
   if (!matchMark(results->rawbuf[offset++], kNecHdrMark)) return false;
   // Check if it is a repeat code.
+  Serial.println("222222");
   if (matchSpace(results->rawbuf[offset], kNecRptSpace) &&
       matchMark(results->rawbuf[offset + 1], kNecBitMark) &&
       (offset + 2 <= results->rawlen ||
@@ -100,7 +101,9 @@ bool IRrecv::decodeNEC(decode_results *results, uint16_t offset,
     results->address = 0;
     results->command = 0;
     results->repeat = true;
+    Serial.println("33333");
     return true;
+
   }
 
   // Match Header (cont.) + Data + Footer
@@ -111,6 +114,7 @@ bool IRrecv::decodeNEC(decode_results *results, uint16_t offset,
                     kNecBitMark, kNecZeroSpace,
                     kNecBitMark, kNecMinGap, true)) return false;
   // Compliance
+  Serial.println("44444");
   // Calculate command and optionally enforce integrity checking.
   uint8_t command = (data & 0xFF00) >> 8;
   // Command is sent twice, once as plain and then inverted.
