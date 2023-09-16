@@ -66,8 +66,8 @@ bool IRrecv::decodeBEN(decode_results *results, uint16_t offset,
 }
 
 #ifndef STASSID
-#define STASSID "Noodlefishes"
-#define STAPSK "C@foodconv3rters"
+#define STASSID "Ns"
+#define STAPSK "C"
 // #define STASSID "P"
 // #define STAPSK "P"
 
